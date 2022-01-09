@@ -108,6 +108,24 @@ export class SignInComponent implements OnInit {
 
     this.authService.signIn(FacebookLoginProvider.PROVIDER_ID).then((data) => {
       console.log("facebook login data",data);
+
+      let socialData = {
+        accessToken: data.authToken,
+        facebookId: data.id
+      }
+      this.commonService
+        .post<any>(account.socialLogin, socialData)
+        .subscribe(
+          async (res) => {
+            console.log(res);
+            this.snackBar.open('You logged successfully!', '×', { panelClass: 'success', verticalPosition: 'top', duration: 3000 });
+            localStorage.setItem('user', JSON.stringify(res.user));
+            localStorage.setItem('token', res.user.token);
+            this.router.navigate(['/users']);
+          }, err => {
+            console.log(err);
+
+          })
     }).catch(data => {
       console.log(data);
 
